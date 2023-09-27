@@ -6,7 +6,7 @@ const verifyToken = async (req, res, next) => {
     const channelId = req.params.channel
     let token = await FirestoreUtils.getAccessTokenById(channelId)
     let refreshToken = await FirestoreUtils.getRefreshAccessTokenById(channelId)
-    await TwitchAPI.validToken(token).then((res) => {
+    await TwitchAPI.validToken(token).then(() => {
         return next()
     }).catch(() => {
         AuthUtils.refreshToken(channelId, refreshToken).then(() => {

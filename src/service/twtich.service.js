@@ -27,7 +27,7 @@ exports.followage = async (req, res) => {
         let followInfo = await twitchAPI.getFollowInfoByUserId(token, userId, channelId)
             .then((res) => res.data.data)
             .catch((err) => { throw new APIException(err.response.data.status, err.response.data.message) })
-        return res.status(200).json(DateTimeUtils.getDateByFormatFromNow(format, followInfo[0].followed_at))
+        return res.status(200).send(DateTimeUtils.getDateByFormatFromNow(format, followInfo[0].followed_at))
     } catch (e) {
         LogUtils.error(e.message)
         if (e instanceof APIException) {
