@@ -20,17 +20,22 @@ app.use(cookieParser());
 app.use(cookieSession({ secret: SESSION_SECRET }));
 app.use(passport.initialize());
 
+// Middleware Authentication Configuration
+const middleware = require("./src/middleware/auth.middleware");
 
 // Controller Configuration
 const authenController = require("./src/controller/auth.controller");
 app.use("/rest/auth", authenController);
 const twtichController = require("./src/controller/twitch.controller");
-app.use("/rest/twitch", twtichController);
+app.use("/rest/twitch/:channel", middleware, twtichController);
 
 // If user has an authenticated session, display it, otherwise display link to authenticate
 app.get('/', function (req, res) {
     if (req.session && req.session.passport && req.session.passport.user) {
-        return res.render("success")
+        return res.render("success", {
+            profileImg: req.session.passport.user.data[0].profile_image_url,
+            displayName: req.session.passport.user.data[0].display_name
+        })
     }
     return res.render("index")
 });

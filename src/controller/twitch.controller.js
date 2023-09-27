@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 const twitchService = require("../service/twtich.service")
 
 var bodyParser = require("body-parser");
@@ -8,6 +8,6 @@ var bodyParser = require("body-parser");
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-router.get("/:channel/followage", twitchService.followage);
+router.get("/followage", twitchService.followage);
 
 module.exports = router;

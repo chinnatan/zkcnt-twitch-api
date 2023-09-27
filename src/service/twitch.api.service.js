@@ -1,4 +1,3 @@
-const { async } = require('@firebase/util')
 const axios = require('axios')
 
 function getOptions(token) {
@@ -13,6 +12,19 @@ function getOptions(token) {
     }
 }
 
+function getTwitchOAuthOptions(token) {
+    return options = {
+        baseURL: process.env.BASE_URL_TWITCH_OAUTH_API,
+        withCredentials: true,
+        headers: {
+            "Authorization": 'OAuth ' + token
+        },
+    }
+}
+
+exports.validToken = async (token,) => {
+    return axios.get('/validate', getTwitchOAuthOptions(token))
+}
 
 exports.getUserIdByName = async (token, name) => {
     return axios.get('/users?login=' + name, getOptions(token))

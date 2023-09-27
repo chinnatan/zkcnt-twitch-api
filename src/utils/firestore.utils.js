@@ -28,3 +28,20 @@ exports.getAccessTokenById = async (id) => {
         }
     })
 }
+
+exports.getRefreshAccessTokenById = async (id) => {
+    return await firestore.collection("users").doc(id).get().then((data) => {
+        if (data.exists) {
+            return data.data().refreshToken
+        } else {
+            console.log("No data");
+        }
+    })
+}
+
+exports.updateNewToken = async (id, newAaccessToken, newRefreshToken) => {
+    await firestore.collection("users").doc(id).update({
+        accessToken: newAaccessToken,
+        refreshToken: newRefreshToken,
+    })
+}

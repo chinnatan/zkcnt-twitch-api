@@ -3,6 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 const request = require('request');
 const OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+const PassportRefresh = require('passport-oauth2-refresh');
+const FirestoreUtil = require("../utils/firestore.utils")
 
 var bodyParser = require("body-parser");
 
@@ -44,7 +46,7 @@ passport.deserializeUser(function (user, done) {
     done(null, user);
 });
 
-passport.use('twitch', new OAuth2Strategy({
+const oauth = new OAuth2Strategy({
     authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
     tokenURL: 'https://id.twitch.tv/oauth2/token',
     clientID: TWITCH_CLIENT_ID,
@@ -52,22 +54,18 @@ passport.use('twitch', new OAuth2Strategy({
     callbackURL: CALLBACK_URL,
     state: true
 },
-    function (accessToken, refreshToken, profile, done) {
+    async function (accessToken, refreshToken, profile, done) {
         profile.accessToken = accessToken;
         profile.refreshToken = refreshToken;
 
-        // User.findOrCreate({ twitchId: profile.id }, function (err, user) {
-        //     done(err, user);
-        // });
-
-        // Securely store user profile in your DB
-        //User.findOrCreate(..., function(err, user) {
-        //  done(err, user);
-        //});
+        await FirestoreUtil.setUser(profile.data[0].id, profile)
 
         done(null, profile);
     }
-));
+)
+
+passport.use('twitch', oauth);
+PassportRefresh.use('twtich', oauth)
 
 // Set route to start OAuth link, this is where you define scopes to request
 router.get("/", passport.authenticate('twitch', { scope: ['user_read', 'user:read:follows', 'moderation:read', 'moderator:read:followers'] }));
