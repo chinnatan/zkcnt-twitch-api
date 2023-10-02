@@ -68,7 +68,7 @@ passport.use('twitch', oauth);
 PassportRefresh.use('twtich', oauth)
 
 // Set route to start OAuth link, this is where you define scopes to request
-router.get("/", passport.authenticate('twitch', { scope: ['user_read', 'user:read:follows', 'moderation:read', 'moderator:read:followers'] }));
+router.get("/", passport.authenticate('twitch', { scope: ['user_read', 'user:read:follows', 'moderation:read' ] }));
 // Set route for OAuth redirect
 router.get('/callback', passport.authenticate('twitch', { successRedirect: '/success', failureRedirect: '/' }));
 

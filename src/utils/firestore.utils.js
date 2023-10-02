@@ -46,20 +46,6 @@ exports.updateNewToken = async (id, newAaccessToken, newRefreshToken) => {
     })
 }
 
-exports.getIsTodayTokenChecked = async (id) => {
-    return new Promise(async (resolve, reject) => {
-        await firestore.collection("users").doc(id).get().then((data) => {
-            if (data.exists) {
-                resolve(data.get("isTodayTokenChecked"))
-            } else {
-                reject(null)
-            }
-        })
-    })
-}
-
-exports.updateIsTodayTokenChecked = async (id, datetime) => {
-    await firestore.collection("users").doc(id).update({
-        isTodayTokenChecked: datetime,
-    })
+exports.getAllChannels = async () => {
+    return await firestore.collection("users").listDocuments()
 }

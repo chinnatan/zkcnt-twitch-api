@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const firestore = require("./src/utils/firestore.utils")
+const AuthUtil = require('./src/utils/auth.utils')
 const chalk = require('chalk')
 const app = express();
 const port = process.env.PORT
@@ -20,14 +21,11 @@ app.use(cookieParser());
 app.use(cookieSession({ secret: SESSION_SECRET }));
 app.use(passport.initialize());
 
-// Middleware Authentication Configuration
-const middleware = require("./src/middleware/auth.middleware");
-
 // Controller Configuration
 const authenController = require("./src/controller/auth.controller");
 app.use("/rest/auth", authenController);
 const twtichController = require("./src/controller/twitch.controller");
-app.use("/rest/twitch/:channel", middleware, twtichController);
+app.use("/rest/twitch/:channel", twtichController);
 
 // If user has an authenticated session, display it, otherwise display link to authenticate
 app.get('/', function (req, res) {
@@ -51,3 +49,12 @@ app.get('/success', async function (req, res) {
 app.listen(port, function () {
     console.info("Server is running port. ==>: " + chalk.blue(port));
 });
+
+function main () {
+    AuthUtil.validToken()
+    setInterval(() => {
+        AuthUtil.validToken()
+    }, 30 * 60 * 1000); // Every 30 Min. is Checked
+}
+
+main()

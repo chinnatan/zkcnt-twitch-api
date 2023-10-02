@@ -22,8 +22,13 @@ exports.followage = async (req, res) => {
 
         let token = await FirestoreUtils.getAccessTokenById(channelId)
         let userId = await twitchAPI.getUserIdByName(token, name)
-            .then((res) => res.data.data[0].id)
+            .then((res) => { return res.data.data[0].id })
             .catch((err) => { throw new APIException(err.response.data.status, err.response.data.message) })
+
+        if (userId === channelId) {
+           return res.status(200).send(`${name} ไม่ได้ติดตาม ${name}`)
+        }
+
         let followInfo = await twitchAPI.getFollowInfoByUserId(token, userId, channelId)
             .then((res) => res.data.data)
             .catch((err) => { throw new APIException(err.response.data.status, err.response.data.message) })
